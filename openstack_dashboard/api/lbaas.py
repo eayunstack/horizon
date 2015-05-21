@@ -187,8 +187,11 @@ def _pool_get(request, pool_id, expand_resource=False):
                                expand_name_only=False)
         pool['members'] = _member_list(request, expand_pool=False,
                                        pool_id=pool_id)
-        pool['health_monitors'] = pool_health_monitor_list(
-            request, id=pool['health_monitors'])
+        monitors = []
+        for monitor_id in pool['health_monitors']:
+            monitors.append(_pool_health_monitor_get(request, monitor_id,
+                                                     False))
+        pool['health_monitors'] = monitors
     return Pool(pool)
 
 
