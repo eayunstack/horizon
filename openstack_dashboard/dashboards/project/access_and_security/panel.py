@@ -16,13 +16,22 @@
 from django.utils.translation import ugettext_lazy as _
 
 import horizon
-
+from openstack_dashboard.api import neutron
 from openstack_dashboard.dashboards.project import dashboard
 
 
 class AccessAndSecurity(horizon.Panel):
     name = _("Access & Security")
     slug = 'access_and_security'
+
+    def can_access(self, context):
+        request = context['request']
+        if not neutron.is_service_enabled(request,
+                                          config_name='enable_security_group',
+                                          ext_name='security-group'):
+            return False
+        return True
+
 
 
 dashboard.Project.register(AccessAndSecurity)
